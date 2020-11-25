@@ -1,0 +1,3 @@
+avatar:165*240
+product_smal: 85*125
+product_bigg:260*380
