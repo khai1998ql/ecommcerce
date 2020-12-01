@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -22,5 +23,15 @@ class TestController extends Controller
 //           DB::table('product_detail')->where('id', $item->id)->update(['product_quantity' => $rand]);
 //       }
 
+    }
+    public function test(){
+        $dt = Carbon::now('Asia/Ho_Chi_Minh');
+        echo $dt;
+        echo "<br/>";
+        $time = date('Y', strtotime($dt));
+        echo $time;
+        echo "<br/>";
+        $day = $dt->addDay(3);
+        echo $day;
     }
 }

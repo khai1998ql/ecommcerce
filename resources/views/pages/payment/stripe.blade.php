@@ -178,6 +178,17 @@
                                 <!-- Used to display form errors. -->
                                 <div id="card-errors" role="alert"></div>
                             </div>
+                            <div>
+                                @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+                            </div>
                             <br/>
                             <input type="hidden" name="ship_name" value="{{ $data['ship_name'] }}">
                             <input type="hidden" name="ship_email" value="{{ $data['ship_email'] }}">
@@ -186,6 +197,7 @@
                             <input type="hidden" name="ship_note" value="{{ $data['ship_note'] }}">
                             <input type="hidden" name="payment_type" value="{{ $data['payment_type'] }}">
                             <button class="btn btn-sm btn-success">Thanh toán</button>
+
                         </form>
                     </div>
                 </div>

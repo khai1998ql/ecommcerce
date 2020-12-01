@@ -29,6 +29,7 @@
     <meta name="author" content="ThemePixels">
 
     <title>Quản trị Admin</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('public/frontend//img/favicon.png')}}">
     <!-- vendor css -->
     <link href="{{ asset('public/backend/lib/font-awesome/css/font-awesome.css') }}" rel="stylesheet">
     <link href="{{ asset('public/backend/lib/Ionicons/css/ionicons.css') }}" rel="stylesheet">
@@ -112,6 +113,32 @@
         </ul>
         <a href="#" class="sl-menu-link">
             <div class="sl-menu-item">
+                <i class="fa fa-cart-plus tx-24"></i>
+                <span class="menu-item-label">Quản lý đơn hàng</span>
+                <i class="menu-item-arrow fa fa-angle-down"></i>
+            </div><!-- menu-item -->
+        </a><!-- sl-menu-link -->
+        <ul class="sl-menu-sub nav flex-column">
+            <li class="nav-item"><a href="{{ route('admin.order.new_order') }}" class="nav-link">Đơn hàng mới</a></li>
+            <li class="nav-item"><a href="{{ route('admin.order.accept_order') }}" class="nav-link">Đơn hàng đã chấp nhận</a></li>
+            <li class="nav-item"><a href="{{ route('admin.order.delivery_order') }}" class="nav-link">Đơn hàng đang gửi đi</a></li>
+            <li class="nav-item"><a href="{{ route('admin.order.done_order') }}" class="nav-link">Đơn hàng hoàn tất</a></li>
+            <li class="nav-item"><a href="{{ route('admin.order.cancel_order') }}" class="nav-link">Đơn hàng đã hủy</a></li>
+        </ul>
+        <a href="#" class="sl-menu-link">
+            <div class="sl-menu-item">
+                <i class="fa fa-newspaper-o tx-24"></i>
+                <span class="menu-item-label">Tin tức</span>
+                <i class="menu-item-arrow fa fa-angle-down"></i>
+            </div><!-- menu-item -->
+        </a><!-- sl-menu-link -->
+        <ul class="sl-menu-sub nav flex-column">
+            <li class="nav-item"><a href="{{ route('admin.blog_category') }}" class="nav-link">Danh mục tin tức</a></li>
+            <li class="nav-item"><a href="{{ route('admin.blog_post') }}" class="nav-link">Danh sách bài viết</a></li>
+            <li class="nav-item"><a href="{{ route('admin.blog_post.add') }}" class="nav-link">Thêm mới bài viết</a></li>
+        </ul>
+        <a href="#" class="sl-menu-link">
+            <div class="sl-menu-item">
                 <i class="menu-item-icon icon ion-ios-bookmarks-outline tx-20"></i>
                 <span class="menu-item-label">Tables</span>
                 <i class="menu-item-arrow fa fa-angle-down"></i>
@@ -168,7 +195,7 @@
             <div class="dropdown">
                 <a href="" class="nav-link nav-link-profile" data-toggle="dropdown">
                     <span class="logged-name">{{ Auth::user()->name }}</span>
-                    <img src="{{ asset('public/backend//img/img3.jpg')}}" class="wd-32 rounded-circle" alt="">
+                    <img src="{{ asset(Auth::user()->admin_avatar)}}" class="wd-32 rounded-circle" alt="">
                 </a>
                 <div class="dropdown-menu dropdown-menu-header wd-200">
                     <ul class="list-unstyled user-profile-nav">

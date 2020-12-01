@@ -139,25 +139,25 @@
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="checkout-form-list">
                                     <label>Họ tên<span class="required">*</span></label>
-                                    <input type="text" name="ship_name" value="<?php if(Auth::user()){ echo Auth::user()->name; } ?>" placeholder="Nhập họ tên!" required>
+                                    <input type="text" required name="ship_name" value="<?php if(Auth::user()){ echo Auth::user()->name; } ?>" placeholder="Nhập họ tên!" required>
                                 </div>
                             </div>
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="checkout-form-list">
                                     <label>Email<span class="required">*</span></label>
-                                    <input type="text" name="ship_email" value="<?php if(Auth::user()){ echo Auth::user()->email; } ?>" placeholder="Nhập địa chỉ!" required>
+                                    <input type="text" required name="ship_email" value="<?php if(Auth::user()){ echo Auth::user()->email; } ?>" placeholder="Nhập địa chỉ!" required>
                                 </div>
                             </div>
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="checkout-form-list">
                                     <label>Số điện thoại<span class="required">*</span></label>
-                                    <input type="text" name="ship_phone" value="<?php if(Auth::user()){ echo Auth::user()->phone; } ?>" placeholder="Nhập số điện thoại!" required>
+                                    <input type="text" required name="ship_phone" value="<?php if(Auth::user()){ echo Auth::user()->phone; } ?>" placeholder="Nhập số điện thoại!" required>
                                 </div>
                             </div>
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="checkout-form-list">
                                     <label>Địa chỉ<span class="required">*</span></label>
-                                    <input type="text" name="ship_address" value="<?php if(Auth::user()){ echo Auth::user()->address; } ?>" placeholder="Nhập địa chỉ!" required>
+                                    <input type="text" required name="ship_address" value="<?php if(Auth::user()){ echo Auth::user()->address; } ?>" placeholder="Nhập địa chỉ!" required>
                                 </div>
                             </div>
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -174,16 +174,16 @@
                                     <ul class="logos_list">
                                         <div class="row">
                                             <div class="col-lg-6">
-                                                <li><input type="radio" name="payment" value="nhanhang"><img src="{{ asset('public/media/payment/nhanhang.jpg') }}" style="width: 120px; height: 120px" title="Thanh toán khi nhận hàng!"></li>
+                                                <li><input type="radio" name="payment" required value="nhanhang"><img src="{{ asset('public/media/payment/nhanhang.jpg') }}" style="width: 120px; height: 120px" title="Thanh toán khi nhận hàng!"></li>
                                             </div>
                                             <div class="col-lg-6">
-                                                <li><input type="radio" name="payment" value="stripe"><img src="{{ asset('public/media/payment/mastercard.png') }}" style="width: 120px; height: 120px" title="Thanh toán bằng thẻ Stripe"></li>
+                                                <li><input type="radio" name="payment" required value="stripe"><img src="{{ asset('public/media/payment/mastercard.png') }}" style="width: 120px; height: 120px" title="Thanh toán bằng thẻ Stripe"></li>
                                             </div>
                                             <div class="col-lg-6">
-                                                <li><input type="radio" name="payment" value="paypal"><img src="{{ asset('public/media/payment/paypal.png') }}" style="width: 120px; height: 120px"></li>
+                                                <li><input type="radio" name="payment" required value="paypal"><img src="{{ asset('public/media/payment/paypal.png') }}" style="width: 120px; height: 120px"></li>
                                             </div>
                                             <div class="col-lg-6">
-                                                <li><input type="radio" name="payment" value="ideal"><img src="{{ asset('public/media/payment/mollie.png') }}" style="width: 120px; height: 120px"></li>
+                                                <li><input type="radio" name="payment" required value="ideal"><img src="{{ asset('public/media/payment/mollie.png') }}" style="width: 120px; height: 120px"></li>
                                             </div>
                                         </div>
                                     </ul>

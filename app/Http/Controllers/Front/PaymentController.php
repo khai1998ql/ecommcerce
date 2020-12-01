@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use App\Mail\InvoiceMail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Cart;
 use Illuminate\Support\Facades\Auth;
@@ -70,18 +71,16 @@ class PaymentController extends Controller
         $data['coupon'] = $valueCoupon;
         $data['delivery'] = $deliveryValue;
         $data['total'] = $total;
-        $data['status'] = 0;
-        $data['month'] = date('m');
-        $data['year'] = date('Y');
-        $data['date'] = date('d-m-Y');
-
+        $data['order_status'] = 0;
+        $now = Carbon::now('Asia/Ho_Chi_Minh');
+        $data['created_at'] = $now;
 //        dd($data);
         $order_id = DB::table('orders')->insertGetId($data);
 
 
         // Insert thông tin khách mua
         $shipping = array();
-//        $shipping['order_id'] = $order_id;
+        $shipping['order_id'] = $order_id;
         $shipping['ship_name'] = $request->ship_name;
         $shipping['ship_email'] = $request->ship_email;
         $shipping['ship_phone'] = $request->ship_phone;
@@ -94,7 +93,7 @@ class PaymentController extends Controller
         // Insert thông tin chi tiết đơn hàng
         foreach (Cart::content() as $item){
             $orders_details = array();
-//            $orders_details['order_id'] = $order_id;
+            $orders_details['order_id'] = $order_id;
             $orders_details['product_id'] = $item->id;
             $orders_details['product_name'] = $item->name;
             $orders_details['color'] = $item->options->color;
@@ -105,6 +104,13 @@ class PaymentController extends Controller
             $orders_details['totalprice'] = intval($item->price*(100 - $item->options->discount_price) / 100 * $item->qty);
 //            dd($orders_details);
             DB::table('orders_details')->insert($orders_details);
+            $product_quantity = intval($item->qty);
+            DB::table('product_detail')
+                        ->where('product_id', $item->id)
+                        ->where('product_color', $item->options->color)
+                        ->where('product_size', $item->options->size)
+                        ->update(['product_quantity' => DB::raw('product_quantity - '.  $product_quantity), 'product_detail_sold' => DB::raw('product_detail_sold + ' .$product_quantity)]);
+            DB::table('products')->where('id', $item->id)->update(['product_sold' => DB::raw('product_sold + ' .$product_quantity)]);
         }
         // Gửi mail
         $email = $request->ship_email;

@@ -1,67 +1,66 @@
 <?php
+
     if(Session::has('orderby')){
         $product = DB::table('products')
+            ->join('product_detail', 'products.id', 'product_detail.product_id')
             ->join('subcategories', 'products.subcategory_id', 'subcategories.id')
-            ->where('subcategories.subcategory_tosub', $subcategory_tosub)
+            ->where('product_detail.product_color', $color)
             ->where('products.status', 1)
+            ->distinct('products.id')
             ->select('products.*', 'subcategories.subcategory_name')
             ->orderBy('selling_price', Session::get('orderby'))
             ->paginate(8);
     }else{
         $product = DB::table('products')
+            ->join('product_detail', 'products.id', 'product_detail.product_id')
             ->join('subcategories', 'products.subcategory_id', 'subcategories.id')
-            ->where('subcategories.subcategory_tosub', $subcategory_tosub)
+            ->where('product_detail.product_color', $color)
             ->where('products.status', 1)
+            ->distinct('products.id')
             ->select('products.*', 'subcategories.subcategory_name')
             ->paginate(8);
     }
 
-    // Lấy danh muicj sản phẩm liên quan
-    $category = DB::table('subcategories')
-        ->where('subcategory_tosub', $subcategory_tosub)
-        ->first();
-    $subcategory = DB::table('subcategories')->where('category_id', $category->category_id)->get();
 
-    // Lấy màu sản phẩm
-    $product_detail = DB::table('product_detail')->get();
-    $dataColor = array();
-    foreach ($product_detail as $key => $item){
-        $dataColor[$key] = $item->product_color;
-    }
-    $color = array_unique($dataColor);
+// Lấy màu sản phẩm
+$product_detail = DB::table('product_detail')->get();
+$dataColor = array();
+foreach ($product_detail as $key => $item){
+    $dataColor[$key] = $item->product_color;
+}
+$color = array_unique($dataColor);
 
-    // Lấy nhãn hiệu
-    $brand = DB::table('brands')->get();
-    // Lấy sản phẩm ngãu nhiên
-    $Ran = Db::table('products')
-        ->join('subcategories', 'products.subcategory_id', 'subcategories.id')
-        ->where('subcategories.subcategory_tosub', $subcategory_tosub)
-        ->where('products.status', 1)
-        ->select('products.*', 'subcategories.subcategory_name')
-        ->get();
+// Lấy nhãn hiệu
+$brand = DB::table('brands')->get();
+// Lấy sản phẩm ngãu nhiên
+$Ran = Db::table('products')
+    ->join('subcategories', 'products.subcategory_id', 'subcategories.id')
+    ->where('products.status', 1)
+    ->select('products.*', 'subcategories.subcategory_name')
+    ->get();
 //    dd($productRan);
-    $ran = array();
-    foreach ($Ran as $keyRan => $itemRan){
-        $ran[$keyRan] = $itemRan->id;
-    }
-    $dataRan1 = array_random($ran, 3);
-    $productRan1 = array();
-    foreach ($Ran as $keyRan => $itemRan){
-        foreach ($dataRan1 as $keyData => $ItemData){
-            if($itemRan->id == $ItemData){
-                $productRan1[$keyRan] = $itemRan;
-            }
+$ran = array();
+foreach ($Ran as $keyRan => $itemRan){
+    $ran[$keyRan] = $itemRan->id;
+}
+$dataRan1 = array_random($ran, 3);
+$productRan1 = array();
+foreach ($Ran as $keyRan => $itemRan){
+    foreach ($dataRan1 as $keyData => $ItemData){
+        if($itemRan->id == $ItemData){
+            $productRan1[$keyRan] = $itemRan;
         }
     }
-    $dataRan2 = array_random($ran, 3);
-    $productRan2 = array();
-    foreach ($Ran as $keyRan => $itemRan){
-        foreach ($dataRan2 as $keyData => $ItemData){
-            if($itemRan->id == $ItemData){
-                $productRan2[$keyRan] = $itemRan;
-            }
+}
+$dataRan2 = array_random($ran, 3);
+$productRan2 = array();
+foreach ($Ran as $keyRan => $itemRan){
+    foreach ($dataRan2 as $keyData => $ItemData){
+        if($itemRan->id == $ItemData){
+            $productRan2[$keyRan] = $itemRan;
         }
     }
+}
 //    dd($productRan);
 
 ?>
@@ -76,7 +75,7 @@
                     <div class="breadcrumbs-menu">
                         <ul>
                             <li><a href="{{ route('index') }}">Trang chủ</a></li>
-                            <li><a href="" class="active">Danh mục sản phẩm</a></li>
+                            <li><a href="" class="active">Tìm kiếm sản phầm có màu: <span style="color: red">{{ $arrayColor['color'] }}</span></a></li>
                         </ul>
                     </div>
                 </div>
@@ -94,43 +93,18 @@
                             <h2>Gợi ý mua hàng</h2>
                         </div>
                         <div class="left-title mb-20">
-                            <h4>Danh mục liên quan</h4>
-                        </div>
-{{--                        <div class="left-menu mb-30">--}}
-{{--                            <ul class="">--}}
-{{--                                @foreach($subcategory as $keySub => $itemSub)--}}
-
-{{--                                    <?php--}}
-{{--                                        $productSub = DB::table('products')->where('subcategory_id', $itemSub->id)->get();--}}
-{{--                                    ?>--}}
-{{--                                    <li><a href="#">{{ $itemSub->subcategory_name }}<span>({{ count($productSub) }})</span></a></li>--}}
-{{--                                @endforeach--}}
-{{--                            </ul>--}}
-{{--                        </div>--}}
-                        <ul class="list-group">
-                            @foreach($subcategory as $keySub => $itemSub)
-                                <?php
-                                $productSub = DB::table('products')->where('subcategory_id', $itemSub->id)->get();
-                                ?>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <a href="#" style="color: #d73a49">{{ $itemSub->subcategory_name }}</a>
-                                <span class="badge badge-primary badge-pill">{{ count($productSub) }}</span>
-                            </li>
-                            @endforeach
-                        </ul>
-                        <div class="left-title mb-20">
                             <h4>Theo màu</h4>
                         </div>
                         <ul class="list-group">
                             @foreach($color as $keyColor => $itemColor)
                                 <?php
-                                    $product_detail = DB::table('product_detail')->where('product_color', $itemColor)->select('product_id')->groupBy('product_id')->get();
-//                                    dd($product_detail);
+                                $product_detail = DB::table('product_detail')->where('product_color', $itemColor)->select('product_id')->groupBy('product_id')->get();
+                                //                                    dd($product_detail);
                                 ?>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <a href="{{ URL::to('search/color/'.$itemColor) }}">{{ $itemColor }}</a>
-                                <span class="badge badge-primary badge-pill">{{ count($product_detail) }}</span>
-                            </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <a href="{{ URL::to('search/color/'.$itemColor) }}">{{ $itemColor }}</a>
+                                    <span class="badge badge-primary badge-pill">{{ count($product_detail) }}</span>
+                                </li>
                             @endforeach
                         </ul>
                         <div class="left-title mb-20">
@@ -171,33 +145,33 @@
                             <div class="product-active-2 owl-carousel">
                                 <div class="product-total-2">
                                     @foreach($productRan1 as $key => $item)
-                                    <div class="single-most-product bd mb-18">
-                                        <div class="most-product-img">
-                                            <a href="{{ URL::to('product/'.to_sub($item->subcategory_name).'/'.to_sub($item->product_name)) }}"><img src="{{ $item->avatar }}" /></a>
-                                        </div>
-                                        <div class="most-product-content">
-{{--                                            <div class="product-rating">--}}
-{{--                                                <ul>--}}
-{{--                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>--}}
-{{--                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>--}}
-{{--                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>--}}
-{{--                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>--}}
-{{--                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>--}}
-{{--                                                </ul>--}}
-{{--                                            </div>--}}
-                                            <h4><a href="{{ URL::to('product/'.to_sub($item->subcategory_name).'/'.to_sub($item->product_name)) }}">{{ $item->product_name }}</a></h4>
-                                            <div class="product-price">
-                                                <ul>
-                                                    @if($item->discount_price == NULL)
-                                                        <li>{{ formatPrice($item->selling_price) }}</li>
-                                                    @else
-                                                        <li>{{ formatPriceSalePer($item->selling_price, $item->discount_price) }}</li>
-                                                        <li class="old-price">{{ formatPrice($item->selling_price) }}</li>
-                                                    @endif
-                                                </ul>
+                                        <div class="single-most-product bd mb-18">
+                                            <div class="most-product-img">
+                                                <a href="{{ URL::to('product/'.to_sub($item->subcategory_name).'/'.to_sub($item->product_name)) }}"><img src="{{ $item->avatar }}" /></a>
+                                            </div>
+                                            <div class="most-product-content">
+                                                {{--                                            <div class="product-rating">--}}
+                                                {{--                                                <ul>--}}
+                                                {{--                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>--}}
+                                                {{--                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>--}}
+                                                {{--                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>--}}
+                                                {{--                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>--}}
+                                                {{--                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>--}}
+                                                {{--                                                </ul>--}}
+                                                {{--                                            </div>--}}
+                                                <h4><a href="{{ URL::to('product/'.to_sub($item->subcategory_name).'/'.to_sub($item->product_name)) }}">{{ $item->product_name }}</a></h4>
+                                                <div class="product-price">
+                                                    <ul>
+                                                        @if($item->discount_price == NULL)
+                                                            <li>{{ formatPrice($item->selling_price) }}</li>
+                                                        @else
+                                                            <li>{{ formatPriceSalePer($item->selling_price, $item->discount_price) }}</li>
+                                                            <li class="old-price">{{ formatPrice($item->selling_price) }}</li>
+                                                        @endif
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
                                     @endforeach
                                 </div>
                                 <div class="product-total-2">
@@ -236,12 +210,12 @@
                     </div>
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
-{{--                    <div class="category-image mb-30">--}}
-{{--                        <a href="#"><img src="img/banner/32.jpg" alt="banner" /></a>--}}
-{{--                    </div>--}}
-{{--                    <div class="section-title-5 mb-30">--}}
-{{--                        <h2>Book</h2>--}}
-{{--                    </div>--}}
+                    {{--                    <div class="category-image mb-30">--}}
+                    {{--                        <a href="#"><img src="img/banner/32.jpg" alt="banner" /></a>--}}
+                    {{--                    </div>--}}
+                    {{--                    <div class="section-title-5 mb-30">--}}
+                    {{--                        <h2>Book</h2>--}}
+                    {{--                    </div>--}}
                     <div class="toolbar mb-30">
                         <div class="shop-tab">
                             <div class="tab-3">
@@ -252,21 +226,24 @@
                             </div>
                             <div class="list-page">
                                 <?php
+                                $page = 1;
+                                if(isset($_GET['page'])){
+                                    $page = intval($_GET['page']);
+                                }else{
                                     $page = 1;
-                                    if(isset($_GET['page'])){
-                                        $page = intval($_GET['page']);
-                                    }else{
-                                        $page = 1;
-                                    }
-                                    $x = 1 + ($page-1) * 8;
-                                    $y = count($product) + ($page - 1) * 8;
+                                }
+                                $x = 1 + ($page-1) * 8;
+                                $y = count($product) + ($page - 1) * 8;
 
-                                    $productY = DB::table('products')
-                                                ->join('subcategories', 'products.subcategory_id', 'subcategories.id')
-                                                ->where('subcategories.subcategory_tosub', $subcategory_tosub)
-                                                ->select('products.*')
-                                                ->get();
-                                    $sum = count($productY);
+                                $productY = DB::table('products')
+                                    ->join('product_detail', 'products.id', 'product_detail.product_id')
+                                    ->join('subcategories', 'products.subcategory_id', 'subcategories.id')
+                                    ->where('product_detail.product_color', $arrayColor['color'])
+                                    ->where('products.status', 1)
+                                    ->distinct('products.id')
+                                    ->select('products.*', 'subcategories.subcategory_name')
+                                    ->get();
+                                $sum = count($productY);
 
                                 ?>
                                 <p>Hiển thị  {{ $x }}-{{ $y }} trong tổng {{ $sum }} sản phẩm</p>
@@ -286,95 +263,40 @@
                     <div class="tab-content">
                         <div class="tab-pane active" id="th">
                             <div class="row">
-                                @foreach($product as $itemPro)
-<!--                                    --><?php
-//                                        dd($itemPro);
-//                                    ?>
-                                <div class="col-lg-3 col-md-4 col-sm-6">
-                                    <!-- single-product-start -->
-                                    <div class="product-wrapper mb-40">
-                                        <div class="product-img">
-                                            <a href="#">
-                                                <img src="{{ asset($itemPro->avatar) }}" alt="book" class="primary" />
-                                            </a>
-                                            <div class="quick-view">
-                                                <a class="action-view" id="{{ $itemPro->id }}" onclick="detail(this.id)"  href="#" data-target="#productModal" data-toggle="modal" title="Xem nhanh">
-                                                    <i class="fa fa-search-plus"></i>
-                                                </a>
-                                            </div>
-                                            <div class="product-flag">
-                                                <ul>
-                                                    @if($itemPro->hot_new == 1)
-                                                        <li><span class="sale">new</span></li>
-                                                    @else
-
-                                                    @endif
-
-                                                    @if($itemPro->discount_price != NULL)
-                                                        <li><span class="discount-percentage">-{{ $itemPro->discount_price }}%</span></li>
-                                                    @else
-
-                                                    @endif
-
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="product-details text-center">
-                                            <div class="product-rating">
-                                                <ul>
-                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
-                                                </ul>
-                                            </div>
-                                            <h4><a href="{{ URL::to('product/'.to_sub($itemPro->subcategory_name).'/'.to_sub($itemPro->product_name)) }}">{{ $itemPro->product_name }}</a></h4>
-                                            <div class="product-price">
-                                                <ul>
-                                                    @if($itemPro->discount_price == NULL)
-                                                        <li>{{ formatPrice($itemPro->selling_price) }}</li>
-                                                    @else
-                                                        <li>{{ formatPriceSalePer($itemPro->selling_price, $itemPro->discount_price) }}</li>
-                                                        <li class="old-price">{{ formatPrice($itemPro->selling_price) }}</li>
-                                                    @endif
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="product-link">
-                                            <div class="product-button">
-                                                <a href="#" id="{{ $itemPro->id }}" onclick="detail(this.id)" title="Thêm vào giỏ hàng" data-target="#productModal" data-toggle="modal"><i class="fa fa-shopping-cart"></i>Thêm nhanh</a>
-                                            </div>
-                                            <div class="add-to-link">
-                                                <ul>
-                                                    <li><a href="{{ URL::to('product/'.to_sub($itemPro->subcategory_name).'/'.to_sub($itemPro->product_name)) }}" title="Chi tiết"><i class="fa fa-external-link"></i></a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- single-product-end -->
-                                </div>
-
-                                @endforeach
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="list">
                             @foreach($product as $itemPro)
-                            <!-- single-shop-start -->
-                            <div class="single-shop mb-30">
-                                <div class="row">
-                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                        <div class="product-wrapper-2">
+                                <!--                                    --><?php
+                                    //                                        dd($itemPro);
+                                    //                                    ?>
+                                    <div class="col-lg-3 col-md-4 col-sm-6">
+                                        <!-- single-product-start -->
+                                        <div class="product-wrapper mb-40">
                                             <div class="product-img">
                                                 <a href="#">
-                                                    <img src="{{ asset($itemPro->avatar) }}" alt="book" class="primary" style="width: 200px;height: 300px" />
+                                                    <img src="{{ asset($itemPro->avatar) }}" alt="book" class="primary" />
                                                 </a>
+                                                <div class="quick-view">
+                                                    <a class="action-view" id="{{ $itemPro->id }}" onclick="detail(this.id)"  href="#" data-target="#productModal" data-toggle="modal" title="Xem nhanh">
+                                                        <i class="fa fa-search-plus"></i>
+                                                    </a>
+                                                </div>
+                                                <div class="product-flag">
+                                                    <ul>
+                                                        @if($itemPro->hot_new == 1)
+                                                            <li><span class="sale">new</span></li>
+                                                        @else
+
+                                                        @endif
+
+                                                        @if($itemPro->discount_price != NULL)
+                                                            <li><span class="discount-percentage">-{{ $itemPro->discount_price }}%</span></li>
+                                                        @else
+
+                                                        @endif
+
+                                                    </ul>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-                                        <div class="product-wrapper-content">
-                                            <div class="product-details">
+                                            <div class="product-details text-center">
                                                 <div class="product-rating">
                                                     <ul>
                                                         <li><a href="#"><i class="fa fa-star"></i></a></li>
@@ -395,30 +317,85 @@
                                                         @endif
                                                     </ul>
                                                 </div>
-                                                <p>{!! str_limit($itemPro->product_content, $limit = 4) !!}</p>
                                             </div>
                                             <div class="product-link">
                                                 <div class="product-button">
-                                                    <a href="#" title="Mua ngay" id="{{ $itemPro->id }}" onclick="detail(this.id)"  href="#" data-target="#productModal" data-toggle="modal"><i class="fa fa-shopping-cart"></i>Mua nhanh</a>
+                                                    <a href="#" id="{{ $itemPro->id }}" onclick="detail(this.id)" title="Thêm vào giỏ hàng" data-target="#productModal" data-toggle="modal"><i class="fa fa-shopping-cart"></i>Thêm nhanh</a>
                                                 </div>
                                                 <div class="add-to-link">
                                                     <ul>
-                                                        <li><a href="{{ URL::to('product/'.to_sub($itemPro->subcategory_name).'/'.to_sub($itemPro->product_name)) }}" title="Chi tiết sản phẩm"><i class="fa fa-external-link"></i></a></li>
+                                                        <li><a href="{{ URL::to('product/'.to_sub($itemPro->subcategory_name).'/'.to_sub($itemPro->product_name)) }}" title="Chi tiết"><i class="fa fa-external-link"></i></a></li>
                                                     </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single-product-end -->
+                                    </div>
+
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="list">
+                        @foreach($product as $itemPro)
+                            <!-- single-shop-start -->
+                                <div class="single-shop mb-30">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                            <div class="product-wrapper-2">
+                                                <div class="product-img">
+                                                    <a href="#">
+                                                        <img src="{{ asset($itemPro->avatar) }}" alt="book" class="primary" style="width: 200px;height: 300px" />
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                                            <div class="product-wrapper-content">
+                                                <div class="product-details">
+                                                    <div class="product-rating">
+                                                        <ul>
+                                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                            <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <h4><a href="{{ URL::to('product/'.to_sub($itemPro->subcategory_name).'/'.to_sub($itemPro->product_name)) }}">{{ $itemPro->product_name }}</a></h4>
+                                                    <div class="product-price">
+                                                        <ul>
+                                                            @if($itemPro->discount_price == NULL)
+                                                                <li>{{ formatPrice($itemPro->selling_price) }}</li>
+                                                            @else
+                                                                <li>{{ formatPriceSalePer($itemPro->selling_price, $itemPro->discount_price) }}</li>
+                                                                <li class="old-price">{{ formatPrice($itemPro->selling_price) }}</li>
+                                                            @endif
+                                                        </ul>
+                                                    </div>
+                                                    <p>{!! str_limit($itemPro->product_content, $limit = 4) !!}</p>
+                                                </div>
+                                                <div class="product-link">
+                                                    <div class="product-button">
+                                                        <a href="#" title="Mua ngay" id="{{ $itemPro->id }}" onclick="detail(this.id)"  href="#" data-target="#productModal" data-toggle="modal"><i class="fa fa-shopping-cart"></i>Mua nhanh</a>
+                                                    </div>
+                                                    <div class="add-to-link">
+                                                        <ul>
+                                                            <li><a href="{{ URL::to('product/'.to_sub($itemPro->subcategory_name).'/'.to_sub($itemPro->product_name)) }}" title="Chi tiết sản phẩm"><i class="fa fa-external-link"></i></a></li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <!-- single-shop-end -->
+                                <!-- single-shop-end -->
                             @endforeach
                         </div>
                     </div>
                     <!-- tab-area-end -->
                     <!-- pagination-area-start -->
                     <div class="row" style="float: right">
-                            {{ $product->links() }}
+                        {{ $product->links() }}
                     </div>
                     <!-- pagination-area-end -->
                 </div>
@@ -466,7 +443,7 @@
                                 <div class="price">
                                     <span id="productPrice"></span>
                                 </div>
-{{--                                <p id="productContent"></p>--}}
+                                {{--                                <p id="productContent"></p>--}}
                                 <form action="{{ route('cart.product.add') }}" method="post">
                                     @csrf
                                     <div class="row">
@@ -474,9 +451,9 @@
                                             <div class="select-option-part">
                                                 <label>Màu*</label>
                                                 <select class="select" id="productColor" name="productColor">
-{{--                                                    <option value="">S</option>--}}
-{{--                                                    <option value="">M</option>--}}
-{{--                                                    <option value="">L</option>--}}
+                                                    {{--                                                    <option value="">S</option>--}}
+                                                    {{--                                                    <option value="">M</option>--}}
+                                                    {{--                                                    <option value="">L</option>--}}
                                                 </select>
 
                                             </div>
@@ -485,17 +462,17 @@
                                             <div class="select-option-part">
                                                 <label>Size*</label>
                                                 <select class="select" name="productSize" id="productSize">
-{{--                                                    <option value="">S</option>--}}
-{{--                                                    <option value="">M</option>--}}
-{{--                                                    <option value="">L</option>--}}
+                                                    {{--                                                    <option value="">S</option>--}}
+                                                    {{--                                                    <option value="">M</option>--}}
+                                                    {{--                                                    <option value="">L</option>--}}
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
                                             <div class="select-option-part">
-                                            <label>Số lượng*</label>
-                                            <input type="number" id="qty" name="qty" min="1" value="1" />
-                                        </div>
+                                                <label>Số lượng*</label>
+                                                <input type="number" id="qty" name="qty" min="1" value="1" />
+                                            </div>
 
                                         </div>
                                     </div>
@@ -520,7 +497,7 @@
                                     </div>
 
                                 </form>
-{{--                                <span><i class="fa fa-check"></i> In stock</span>--}}
+                                {{--                                <span><i class="fa fa-check"></i> In stock</span>--}}
                             </div>
                         </div>
                     </div>
@@ -552,11 +529,6 @@
                     $('#productImgSmall2').removeAttr('src');
                     $('#productImgSmall3').removeAttr('src');
                     $('#productImgSmall4').removeAttr('src');
-
-                    // $('#productImgSmall1').empty();
-                    // $('#productImgSmall2').empty();
-                    // $('#productImgSmall3').empty();
-                    // $('#productImgSmall4').empty();
 
                     $('#product_id').val(data.product.id);
                     $('#productName').text(data.product.product_name);
@@ -640,8 +612,7 @@
             })
         })
     </script>
-
-{{--    // Sắp xép--}}
+    {{--    // Sắp xép--}}
     <script type="text/javascript">
         $(document).ready(function (){
             $('select[name="orderby"]').on("change", function (){
@@ -656,6 +627,4 @@
             })
         })
     </script>
-
-
 @endsection

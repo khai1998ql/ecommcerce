@@ -131,7 +131,7 @@ class CategoryController extends Controller
         $image = $request->file('brand_logo');
         if($image){
             $data['brand_name'] = $request->brand_name;
-            $data['product_tosub'] = to_sub($request->brand_name);
+            $data['brand_tosub'] = to_sub($request->brand_name);
             $image_name = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
             Image::make($image)->resize(300,300)->save('public/media/brand_logo/'.$image_name);
             $data['brand_logo'] = 'public/media/brand_logo/'.$image_name;
@@ -173,7 +173,7 @@ class CategoryController extends Controller
         if($image){
             unlink($brand_old);
             $data['brand_name'] = $request->brand_name;
-            $data['product_tosub'] = to_sub($request->brand_name);
+            $data['brand_tosub'] = to_sub($request->brand_name);
             $image_name = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
             Image::make($image)->resize(300,300)->save('public/media/brand_logo/'.$image_name);
             $data['brand_logo'] = 'public/media/brand_logo/'.$image_name;

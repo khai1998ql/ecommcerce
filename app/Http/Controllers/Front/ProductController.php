@@ -66,48 +66,51 @@ class ProductController extends Controller
                     ->where('products.product_tosub', $product_tosub)
                     ->where('subcategories.subcategory_tosub', $subcategory_tosub)
                     ->first();
-        // Tăng lượt xem cho sản phâm
-        DB::table('products')
-            ->join('categories', 'products.category_id', 'categories.id')
-            ->join('subcategories', 'products.subcategory_id', 'subcategories.id')
-            ->join('brands', 'products.brand_id', 'brands.id')
-            ->where('products.product_tosub', $product_tosub)
-            ->where('subcategories.subcategory_tosub', $subcategory_tosub)
-            ->update(['product_view' => DB::raw('product_view + 1')]);
-
-        // Lấy sản phẩm cùng danh mục
-
-        $productRela = DB::table('products')
-                        ->join('categories', 'products.category_id', 'categories.id')
-                        ->join('subcategories', 'products.subcategory_id', 'subcategories.id')
-                        ->where('subcategory_id', $product->subcategory_id)
-                        ->where('status', 1)
-                        ->select('products.*', 'categories.category_name', 'subcategories.subcategory_name')
-                        ->limit(6)
-                        ->get();
-
-
-        // Lấy sản phẩm đang giảm giá
-        $productSale = DB::table('products')
-                        ->join('categories', 'products.category_id', 'categories.id')
-                        ->join('subcategories', 'products.subcategory_id', 'subcategories.id')
-                        ->where('discount_price', '>', 0)
-                        ->where('status', 1)
-                        ->select('products.*', 'categories.category_name', 'subcategories.subcategory_name')
-                        ->limit(6)
-                        ->get();
-
-
-
-//         Lấy tất cả color của sản phẩm hiện tại
-        $productDetail = DB::table('product_detail')->where('product_id', $product->id)->where('product_quantity', '>', 0)->get();
-        $dataColor = array();
-        foreach ($productDetail as $key => $item){
-            $dataColor[$key] = $item->product_color;
-        }
-        $color = array_unique($dataColor);
-
+//        dd($product);
         if($product){
+
+
+            // Tăng lượt xem cho sản phâm
+            DB::table('products')
+                ->join('categories', 'products.category_id', 'categories.id')
+                ->join('subcategories', 'products.subcategory_id', 'subcategories.id')
+                ->join('brands', 'products.brand_id', 'brands.id')
+                ->where('products.product_tosub', $product_tosub)
+                ->where('subcategories.subcategory_tosub', $subcategory_tosub)
+                ->update(['product_view' => DB::raw('product_view + 1')]);
+
+            // Lấy sản phẩm cùng danh mục
+
+            $productRela = DB::table('products')
+                            ->join('categories', 'products.category_id', 'categories.id')
+                            ->join('subcategories', 'products.subcategory_id', 'subcategories.id')
+                            ->where('subcategory_id', $product->subcategory_id)
+                            ->where('status', 1)
+                            ->select('products.*', 'categories.category_name', 'subcategories.subcategory_name')
+                            ->limit(6)
+                            ->get();
+
+
+            // Lấy sản phẩm đang giảm giá
+            $productSale = DB::table('products')
+                            ->join('categories', 'products.category_id', 'categories.id')
+                            ->join('subcategories', 'products.subcategory_id', 'subcategories.id')
+                            ->where('discount_price', '>', 0)
+                            ->where('status', 1)
+                            ->select('products.*', 'categories.category_name', 'subcategories.subcategory_name')
+                            ->limit(6)
+                            ->get();
+
+
+
+    //         Lấy tất cả color của sản phẩm hiện tại
+            $productDetail = DB::table('product_detail')->where('product_id', $product->id)->where('product_quantity', '>', 0)->get();
+            $dataColor = array();
+            foreach ($productDetail as $key => $item){
+                $dataColor[$key] = $item->product_color;
+            }
+            $color = array_unique($dataColor);
+
             return view('pages.product.product', compact('product', 'color', 'productRela', 'productSale'));
         }else{
             $notification = array(

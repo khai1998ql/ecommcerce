@@ -100,11 +100,25 @@
                 <div class="col-lg-3 col-md-3 col-sm-5 col-xs-12">
                     <div class="header-search">
                         <form action="#">
-                            <input type="text" placeholder="Search entire store here..." />
-                            <a href="#"><i class="fa fa-search"></i></a>
+                            <input type="text" id="search" placeholder="Search" class="textbox" oninput="search_product()" name="key-search">
+{{--                            <input type="text" id="key" placeholder="Search entire store here..." />--}}
+                            <a href="" id="search"><i class="fa fa-search"></i></a>
                         </form>
                     </div>
+                    <div id="waiting"></div>
+                    <div class="sp-tk">
+
+
+
+                        <div class="sp">
+
+
+
+                        </div>
+
+                    </div>
                 </div>
+
                 <div class="col-lg-6 col-md-6 col-sm-4 col-xs-12">
                     <div class="logo-area text-center logo-xs-mrg">
                         <a href="index.html"><img src="{{ asset('public/frontend/img/logo/logo.png')}}" alt="logo" /></a>
@@ -232,13 +246,13 @@
 												</span>
                                     </div>
                                 </li>
-                                <li><a href="#">Tin tức<i class="fa fa-angle-down"></i></a>
-                                    <div class="sub-menu sub-menu-2">
-                                        <ul>
-                                            <li><a href="blog.html">blog</a></li>
-                                            <li><a href="blog-details.html">blog-details</a></li>
-                                        </ul>
-                                    </div>
+                                <li><a href="{{ route('blog') }}">Tin tức</a>
+{{--                                    <div class="sub-menu sub-menu-2">--}}
+{{--                                        <ul>--}}
+{{--                                            <li><a href="blog.html">blog</a></li>--}}
+{{--                                            <li><a href="blog-details.html">blog-details</a></li>--}}
+{{--                                        </ul>--}}
+{{--                                    </div>--}}
                                 </li>
                                 <li><a href="#">Cửa hàng<i class="fa fa-angle-down"></i></a>
                                     <div class="sub-menu sub-menu-2">
@@ -591,6 +605,7 @@
             });
     });
 </script>
+
 
 </body>
 </html>
